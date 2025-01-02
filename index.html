@@ -103,14 +103,14 @@
                 const config = jsyaml.load(yamlText); // Parse the YAML file
                 console.log('Parsed YAML:', config);
                 
-                if (!config.background_color || typeof config.intensity !== 'number') {
-                    throw new Error('Missing "background_color" or "intensity" in config.yaml.');
+                if (!config.background_color || typeof config.background_color_intensity !== 'number') {
+                    throw new Error('Missing "background_color" or "background_color_intensity" in config.yaml.');
                 }
                 
                 return config;
             } catch (error) {
                 console.error('Error loading or parsing config.yaml:', error);
-                return { background_color: 'black', intensity: 100 }; // Default to black at full intensity if there's an error
+                return { background_color: 'black', background_color_intensity: 100 }; // Default to black at full background_color_intensity if there's an error
             }
         }
 
@@ -118,9 +118,9 @@
         async function setBackgroundColor() {
             const config = await fetchConfigFromYAML();
             const userColor = config.background_color.toLowerCase();
-            const intensity = Math.min(Math.max(config.intensity, 0), 100) / 100; // Clamp intensity between 0 and 100, then normalize
+            const background_color_intensity = Math.min(Math.max(config.background_color_intensity, 0), 100) / 100; // Clamp background_color_intensity between 0 and 100, then normalize
 
-            console.log('User background_color:', userColor, 'Intensity:', intensity);
+            console.log('User background_color:', userColor, 'background_color_intensity:', background_color_intensity);
 
             const COLOUR = COLORS[userColor] || '#000000'; // Default to black if color not found
             console.log('Resolved hex background_color:', COLOUR);
@@ -131,7 +131,7 @@
                 b: parseInt(COLOUR.slice(5, 7), 16)
             };
 
-            const GRADIENT_COLOUR = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${intensity})`;
+            const GRADIENT_COLOUR = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${background_color_intensity})`;
 
             // Apply the user-defined color as the background
             document.body.style.background = `linear-gradient(to bottom, rgb(${rgb.r}, ${rgb.g}, ${rgb.b}), ${GRADIENT_COLOUR})`;
